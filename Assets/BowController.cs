@@ -5,8 +5,7 @@ public class BowController : MonoBehaviour
 {
     [Header ("Arrow")]
     [SerializeField] GameObject arrowModel; // 화살 장전용 모델 오브젝트
-    [SerializeField] Transform arrowModelPos; // 화살 모델의 위치
-    [SerializeField] Transform arrowStartPos; // 화살 모델의 기본 위치
+    [SerializeField] Vector3 arrowStartPos; // 화살 모델의 기본 위치
 
     [Header("String")]
     [SerializeField] LineRenderer lineRenderer; // 라인렌더러 불러오기
@@ -18,7 +17,7 @@ public class BowController : MonoBehaviour
     private void Start()
     {
         arrowModel.SetActive(false); // 게임이 시작하면 비활성화로 시작
-        arrowStartPos = arrowModelPos;
+        arrowStartPos = arrowModel.transform.position;
         stringStartPos = lineRenderer.GetPosition(1); // 라인랜더러의 시작위치 저장
     }
     /// <summary>
@@ -36,6 +35,7 @@ public class BowController : MonoBehaviour
     {
         StopCoroutine(SetRightHandR);
         lineRenderer.SetPosition(1, stringStartPos); // 시작위치로 되돌리기
+        IsFire();
     }
     IEnumerator SetRightHand()
     {
@@ -48,7 +48,10 @@ public class BowController : MonoBehaviour
                              rightHand.transform.position.z)); // 월드 좌표를 로컬로 변환
             Debug.Log($"현재 오른손 로컬 - x : {nowRightHand.x} y : {nowRightHand.y} z : {nowRightHand.z}");
             lineRenderer.SetPosition(1, nowRightHand);
-            Debug.Log("시위 이동");
+            arrowModel.transform.position = new Vector3(rightHand.transform.position.x,
+                                                        rightHand.transform.position.y,
+                                                        rightHand.transform.position.z);
+            Debug.Log($"현재 화살 위치 - x : {arrowModel.transform.position.x} y : {arrowModel.transform.position.y} z : {arrowModel.transform.position.z}");
             yield return null;
         }
     }
@@ -67,6 +70,5 @@ public class BowController : MonoBehaviour
     public void IsFire()
     {
         arrowModel.SetActive(false);
-        arrowModel.transform.position = arrowStartPos.position;
     }
 }
