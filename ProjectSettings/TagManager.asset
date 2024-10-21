@@ -7,14 +7,16 @@ TagManager:
   - Bow
   - Arrow
   - BowHandle
+  - Target
+  - HitArrow
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Bow
   - Water
   - UI
-  - 
+  - ShootArrow
   - 
   - 
   - 
