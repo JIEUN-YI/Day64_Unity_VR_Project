@@ -367,6 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidbody: {fileID: 0}
+  arrowModelPerfab: {fileID: 5136069613404499754, guid: 518f65e5b677b8644ace69198a85a98c, type: 3}
 --- !u!1 &5492917180180234271
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,5 +456,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.1054914, y: 0.07378489, z: 0.12208268}
-  m_Center: {x: -0.7289459, y: -0.00014975667, z: 0.0018128053}
+  m_Size: {x: 0.06197272, y: 0.07378489, z: 0.16974208}
+  m_Center: {x: -0.80172247, y: -0.00014975667, z: -0.00018581747}
