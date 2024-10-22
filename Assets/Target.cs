@@ -10,7 +10,9 @@ public class Target : MonoBehaviour
         {
             Debug.Log("화살과 타켓 충돌");
             ShootArrow shootArrow = collision.gameObject.GetComponent<ShootArrow>();
-            shootArrow.HitArrow();
+            // 부딪힌 위치를 출력 - 배열이므로 가장 먼저 출력한 위치
+            Vector3 point = collision.contacts[0].point;
+            shootArrow.HitArrow(point);
         }
     }
 }

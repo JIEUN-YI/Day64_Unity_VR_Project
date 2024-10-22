@@ -12,15 +12,6 @@ public class ShootArrow : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
     }
     
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Target")
-       {
-            Debug.Log("화살과 타켓 충돌");
-            HitArrow();
-        }
-    }
-    
     public void MoveArrow(float distance)
     {
         Debug.Log("앞방향으로 힘을 받아서 화살 움직이기");
@@ -30,10 +21,11 @@ public class ShootArrow : MonoBehaviour
         Debug.Log("이동");
     }
 
-    public void HitArrow()
+    public void HitArrow(Vector3 point)
     {
-        Debug.Log("현재위치에 새로운 화살을 생성");
-        GameObject hitArrow = Instantiate(arrowModelPerfab, gameObject.transform.position, gameObject.transform.rotation);
+        Debug.Log("현재위치에 새로운 화살모델을 생성");
+        GameObject hitArrow = Instantiate(arrowModelPerfab, point, Quaternion.Euler(0,0,0));
+        // GameObject hitArrow = Instantiate(arrowModelPerfab, point, transform.rotation);
         Debug.Log("기존의 화살을 삭제");
         Destroy(gameObject);
     }
