@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class BowController : MonoBehaviour
 {
+    [Header("Sound")]
+    [SerializeField] public AudioSource stringSound; // 화살 당기기 소리
 
     [Header("Arrow")]
     [SerializeField] GameObject arrowModel; // 화살 장전용 모델 오브젝트
@@ -35,7 +37,8 @@ public class BowController : MonoBehaviour
     /// </summary>
     public void SetRightHandPos()
     {
-        Debug.Log("현재 오른손의 위치를 저장");
+        //Debug.Log("현재 오른손의 위치를 저장");
+        stringSound.Play();
         SetRightHandR = StartCoroutine(SetRightHand());
     }
     /// <summary>
@@ -43,14 +46,14 @@ public class BowController : MonoBehaviour
     /// </summary>
     public void ExitSetRightHand()
     {
+        //stringSound.Stop();
         StopCoroutine(SetRightHandR);
         aim.SetActive(false);
         if (isArrow == true)
         {
-            distance = Vector3.Distance(stringStartPos, nowRightHand);
             // Debug.Log($"거리 : {distance}");
             lineRenderer.SetPosition(1, stringStartPos); // 시작위치로 되돌리기
-            Debug.Log("줄 원위치");
+                                                         // Debug.Log("줄 원위치");
             nowArrow = IsFire();
             ShootArrow shootArrow = nowArrow.GetComponent<ShootArrow>();
             shootArrow.MoveArrow(distance);
@@ -59,11 +62,33 @@ public class BowController : MonoBehaviour
         if (isArrow == false)
         {
             lineRenderer.SetPosition(1, stringStartPos); // 시작위치로 되돌리기
-            Debug.Log("줄 원위치");
+            //Debug.Log("줄 원위치");
         }
     }
     IEnumerator SetRightHand()
     {
+        distance = 0;
+        while (distance < 0.6f)
+        {
+            aim.SetActive(true);
+            //Debug.Log($"현재 오른손 월드 - x : {rightHand.transform.position.x} y : {rightHand.transform.position.y} z : {rightHand.transform.position.z}");
+            nowRightHand = transform.InverseTransformPoint
+                (new Vector3(rightHand.transform.position.x,
+                             rightHand.transform.position.y,
+                             rightHand.transform.position.z)); // 월드 좌표를 로컬로 변환
+            Debug.Log($"현재 오른손 로컬 - x : {nowRightHand.x} y : {nowRightHand.y} z : {nowRightHand.z}");
+            lineRenderer.SetPosition(1, nowRightHand);
+            arrowModel.transform.position = new Vector3(rightHand.transform.position.x,
+                                                        rightHand.transform.position.y,
+                                                        rightHand.transform.position.z);
+            distance = Vector3.Distance(stringStartPos, nowRightHand);
+            //yield return new WaitForSeconds(0.5f);
+            //stringSound.Stop();
+            Debug.Log($"현재 화살 위치 - x : {arrowModel.transform.position.x} y : {arrowModel.transform.position.y} z : {arrowModel.transform.position.z}");
+            yield return null;
+        }
+        yield return null;
+        /*
         while (true)
         {
             aim.SetActive(true);
@@ -72,14 +97,17 @@ public class BowController : MonoBehaviour
                 (new Vector3(rightHand.transform.position.x,
                              rightHand.transform.position.y,
                              rightHand.transform.position.z)); // 월드 좌표를 로컬로 변환
-            //Debug.Log($"현재 오른손 로컬 - x : {nowRightHand.x} y : {nowRightHand.y} z : {nowRightHand.z}");
+            Debug.Log($"현재 오른손 로컬 - x : {nowRightHand.x} y : {nowRightHand.y} z : {nowRightHand.z}");
             lineRenderer.SetPosition(1, nowRightHand);
             arrowModel.transform.position = new Vector3(rightHand.transform.position.x,
                                                         rightHand.transform.position.y,
                                                         rightHand.transform.position.z);
-            //Debug.Log($"현재 화살 위치 - x : {arrowModel.transform.position.x} y : {arrowModel.transform.position.y} z : {arrowModel.transform.position.z}");
+            //yield return new WaitForSeconds(0.5f);
+            //stringSound.Stop();
+            Debug.Log($"현재 화살 위치 - x : {arrowModel.transform.position.x} y : {arrowModel.transform.position.y} z : {arrowModel.transform.position.z}");
             yield return null;
         }
+        */
     }
 
     /// <summary>
@@ -97,10 +125,9 @@ public class BowController : MonoBehaviour
     /// </summary>
     public GameObject IsFire()
     {
-        Debug.Log("화살 모델링 비활성화");
+        //Debug.Log("화살 모델링 비활성화");
         arrowModel.SetActive(false);
-        Debug.Log("화살 오브젝트 생성");
-        // nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, Quaternion.LookRotation(Vector3.forward));
+        //Debug.Log("화살 오브젝트 생성");
         // 오른손 컨트롤러의 위치 기준으로 생성 , 활 기준으로 방향
         // nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, transform.rotation);
         nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, arrowRoation.rotation);
