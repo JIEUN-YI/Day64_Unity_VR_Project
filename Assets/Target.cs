@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
+    [Header("Sound")]
+    [SerializeField] AudioSource hitSound; // 과녁 소리
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "HitArrow")
@@ -13,6 +15,7 @@ public class Target : MonoBehaviour
             // 부딪힌 위치를 출력 - 배열이므로 가장 먼저 출력한 위치
             Vector3 point = collision.contacts[0].point;
             shootArrow.HitArrow(point);
+            hitSound.Play();
         }
     }
 }
