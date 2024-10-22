@@ -1,14 +1,15 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BowController : MonoBehaviour
 {
 
-    [Header ("Arrow")]
+    [Header("Arrow")]
     [SerializeField] GameObject arrowModel; // 화살 장전용 모델 오브젝트
     [SerializeField] Vector3 arrowStartPos; // 화살 모델의 기본 위치
     [SerializeField] Transform arrowRoation;
+    [SerializeField] GameObject aim;
+    bool isArrow; // 화살의 장착 여부
 
     [Header("String")]
     [SerializeField] LineRenderer lineRenderer; // 라인렌더러 불러오기
@@ -22,11 +23,13 @@ public class BowController : MonoBehaviour
     GameObject nowArrow; // 현재 발사할 화살
     private void Start()
     {
+        aim.SetActive(false);
         arrowModel.SetActive(false); // 게임이 시작하면 비활성화로 시작
         arrowStartPos = arrowModel.transform.localPosition; // 활을 기준으로 화살 모델의 시작위치
         stringStartPos = lineRenderer.GetPosition(1); // 라인랜더러의 시작위치 저장
+        isArrow = false; // 장착되지 않음
     }
- 
+
     /// <summary>
     /// 활 시위를 잡아 당기면서
     /// </summary>
@@ -41,19 +44,29 @@ public class BowController : MonoBehaviour
     public void ExitSetRightHand()
     {
         StopCoroutine(SetRightHandR);
-        distance = Vector3.Distance(stringStartPos, nowRightHand);
-        // Debug.Log($"거리 : {distance}");
-        lineRenderer.SetPosition(1, stringStartPos); // 시작위치로 되돌리기
-        Debug.Log("줄 원위치");
-        nowArrow = IsFire();
-        ShootArrow shootArrow = nowArrow.GetComponent<ShootArrow>();
-        shootArrow.MoveArrow(distance);
-        // Debug.Log($"화살의 위치 : {nowArrow.transform.position.x}, {nowArrow.transform.position.y}, {nowArrow.transform.position.z}");
+        aim.SetActive(false);
+        if (isArrow == true)
+        {
+            distance = Vector3.Distance(stringStartPos, nowRightHand);
+            // Debug.Log($"거리 : {distance}");
+            lineRenderer.SetPosition(1, stringStartPos); // 시작위치로 되돌리기
+            Debug.Log("줄 원위치");
+            nowArrow = IsFire();
+            ShootArrow shootArrow = nowArrow.GetComponent<ShootArrow>();
+            shootArrow.MoveArrow(distance);
+            // Debug.Log($"화살의 위치 : {nowArrow.transform.position.x}, {nowArrow.transform.position.y}, {nowArrow.transform.position.z}");
+        }
+        if (isArrow == false)
+        {
+            lineRenderer.SetPosition(1, stringStartPos); // 시작위치로 되돌리기
+            Debug.Log("줄 원위치");
+        }
     }
     IEnumerator SetRightHand()
     {
         while (true)
         {
+            aim.SetActive(true);
             //Debug.Log($"현재 오른손 월드 - x : {rightHand.transform.position.x} y : {rightHand.transform.position.y} z : {rightHand.transform.position.z}");
             nowRightHand = transform.InverseTransformPoint
                 (new Vector3(rightHand.transform.position.x,
@@ -75,6 +88,7 @@ public class BowController : MonoBehaviour
     public void IsReady()
     {
         arrowModel.transform.localPosition = arrowStartPos; // 장착 시 원래 화살의 시작 위치
+        isArrow = true;
         arrowModel.SetActive(true);
     }
 
@@ -87,10 +101,11 @@ public class BowController : MonoBehaviour
         arrowModel.SetActive(false);
         Debug.Log("화살 오브젝트 생성");
         // nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, Quaternion.LookRotation(Vector3.forward));
-                                                // 오른손 컨트롤러의 위치 기준으로 생성 , 활 기준으로 방향
+        // 오른손 컨트롤러의 위치 기준으로 생성 , 활 기준으로 방향
         // nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, transform.rotation);
-         nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, arrowRoation.rotation);
+        nowArrow = Instantiate(shootArrowPrefab, rightHand.transform.position, arrowRoation.rotation);
         // Debug.Log($"화살의 위치 : {nowArrow.transform.position.x}, {nowArrow.transform.position.y}, {nowArrow.transform.position.z}");
+        isArrow = false;
         return nowArrow;
     }
 }
